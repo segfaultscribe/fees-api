@@ -1,36 +1,7 @@
-# .golangci.yml
 version: "2"
-run:
-  timeout: 3m
-  issues-exit-code: 1
-  tests: true
-
-linters-settings:
-
-  exhaustive:
-    default-signifies-exhaustive: true
-
-  godot:
-    period: true
-
-  errcheck:
-    check-type-assertions: true
-    check-blank: true
-
-  revive:
-    confidence: 0.8
-    rules:
-      - name: exported
-        disabled: false
-      - name: unexported-return
-        disabled: true
-        
-formatters-settings:
-  gofumpt:
-    extra-rules: true
 
 linters:
-  disable-all: true
+  default: none
   enable:
     - errcheck
     - govet
@@ -38,15 +9,34 @@ linters:
     - revive
     - exhaustive
     - godot
+  settings:
+    exhaustive:
+      default-signifies-exhaustive: true
+    godot:
+      period: true
+    errcheck:
+      check-type-assertions: true
+      check-blank: true
+    revive:
+      confidence: 0.8
+      rules:
+        - name: exported
+          disabled: false
+        - name: unexported-return
+          disabled: true
 
 formatters:
   enable:
     - gofumpt
+  settings:
+    gofumpt:
+      extra-rules: true
 
-issues:
-  max-issues-per-linter: 0
-  max-same-issues: 0
-  exclude-rules:
+exclusions:
+  rules:
     - path: _test\.go
       linters:
         - errcheck
+
+run:
+  timeout: 3m
