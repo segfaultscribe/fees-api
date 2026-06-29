@@ -1,0 +1,36 @@
+version: "2"
+
+run:
+  timeout: 3m
+
+linters:
+  default: none
+  enable:
+    - errcheck
+    - govet
+    - staticcheck
+    - revive
+    - exhaustive
+    - godot
+  settings:
+    exhaustive:
+      default-signifies-exhaustive: true
+    godot:
+      period: true
+    errcheck:
+      check-type-assertions: true
+      check-blank: true
+    revive:
+      confidence: 0.8
+      rules:
+        - name: exported
+          disabled: false
+        - name: unexported-return
+          disabled: true
+
+formatters:
+  enable:
+    - gofumpt
+  settings:
+    gofumpt:
+      extra-rules: true
