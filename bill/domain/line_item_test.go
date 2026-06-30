@@ -18,6 +18,7 @@ func TestNewLineItem(t *testing.T) {
 		{name: "valid line item", inputLineID: "test-id", inputDescription: "cheeseburger", inputAmount: 1200, inputCurrency: Currency(USD), wantDescription: "cheeseburger", wantErr: nil},
 		{name: "description with spaces", inputLineID: "test-id", inputDescription: " cheeseburger  ", inputAmount: 1200, inputCurrency: Currency(USD), wantDescription: "cheeseburger", wantErr: nil},
 		{name: "empty description", inputLineID: "test-id", inputDescription: "", inputAmount: 1200, inputCurrency: USD, wantDescription: "", wantErr: ErrDescriptionEmpty},
+		{name: "empty line_id", inputLineID: "", inputDescription: "cheeseburger", inputAmount: 1200, inputCurrency: USD, wantDescription: "", wantErr: ErrLineIDEmpty},
 		{name: "negative amount", inputLineID: "test-id", inputDescription: "item", inputAmount: -100, inputCurrency: USD, wantDescription: "", wantErr: ErrAmountNegative},
 		{name: "zero amount", inputLineID: "test-id", inputDescription: "gift", inputAmount: 0, inputCurrency: USD, wantDescription: "gift", wantErr: nil},
 	}
@@ -45,8 +46,8 @@ func TestNewLineItem(t *testing.T) {
 			if got.Currency != tt.inputCurrency {
 				t.Errorf("Currency = %v, want %v", got.Currency, tt.inputCurrency)
 			}
-			if got.LineID == "" {
-				t.Error("expected LineID to be generated, got empty string")
+			if got.LineID != tt.inputLineID {
+				t.Errorf("LineID = %q, want %q", got.LineID, tt.inputLineID)
 			}
 		})
 	}

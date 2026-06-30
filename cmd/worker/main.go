@@ -11,8 +11,6 @@ import (
 	"encore.app/bill/workflow"
 )
 
-const taskQueue = "fees-api-bill-queue"
-
 func main() {
 	hostPort := "localhost:7233"
 	namespace := "default"
@@ -26,10 +24,10 @@ func main() {
 	}
 	defer c.Close()
 
-	w := worker.New(c, taskQueue, worker.Options{})
+	w := worker.New(c, workflow.TaskQueue, worker.Options{})
 	w.RegisterWorkflow(workflow.BillWorkflow)
 
-	log.Println("starting bill workflow worker on task queue:", taskQueue)
+	log.Println("starting bill workflow worker on task queue:", workflow.TaskQueue)
 	if err := w.Run(worker.InterruptCh()); err != nil {
 		log.Fatalf("worker stopped with error: %v", err)
 	}
