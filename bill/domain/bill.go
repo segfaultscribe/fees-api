@@ -17,7 +17,7 @@ const (
 type Bill struct {
 	BillID    string
 	Currency  Currency
-	LineItems map[string]*LineItem
+	LineItems map[string]LineItem
 	Status    BillStatus
 	CreatedAt time.Time
 	ClosedAt  time.Time
@@ -31,7 +31,7 @@ func NewBill(id string, currency Currency, createdAt time.Time) *Bill {
 	return &Bill{
 		BillID:    id,
 		Currency:  currency,
-		LineItems: make(map[string]*LineItem),
+		LineItems: make(map[string]LineItem),
 		Status:    BillOpen,
 		CreatedAt: createdAt,
 	}
