@@ -24,11 +24,11 @@ var (
 	// ErrUnsupportedCurrency indicates currency is not one of the supported currencies {USD, GEL}.
 	ErrUnsupportedCurrency = errors.New("unsupported currency")
 
-	// ErrCurrencyEmpty indicates the currency value passing in string is an empty string.
-	ErrCurrencyEmpty = errors.New("currency value not set")
+	// ErrAmountEmpty indicates the currency value passing in string is an empty string.
+	ErrAmountEmpty = errors.New("currency value not set")
 
-	// ErrCurrencyNegative indicates a negative value was passed for the amount.
-	ErrCurrencyNegative = errors.New("negative value for currency")
+	// ErrAmountNegative indicates a negative value was passed for the amount.
+	ErrAmountNegative = errors.New("negative value for currency")
 
 	// ErrInvalidFormat indicates the amount passed as string has non-numeric characters('.' excluded).
 	ErrInvalidFormat = errors.New("amount is not a valid decimal number")
@@ -56,7 +56,7 @@ func ParseCurrency(ISOCode string) (Currency, error) {
 // It does proper validation to ensure the passed amount is a valid decimal.
 func ToMinorUnits(amount string) (int64, error) {
 	if amount == "" {
-		return 0, ErrCurrencyEmpty
+		return 0, ErrAmountEmpty
 	}
 
 	amount = strings.TrimSpace(amount)
@@ -66,7 +66,7 @@ func ToMinorUnits(amount string) (int64, error) {
 	}
 
 	if strings.HasPrefix(amount, "-") {
-		return 0, fmt.Errorf("%w: %s", ErrCurrencyNegative, amount)
+		return 0, fmt.Errorf("%w: %s", ErrAmountNegative, amount)
 	}
 
 	parts := strings.SplitN(amount, ".", 2)

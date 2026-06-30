@@ -46,9 +46,9 @@ func TestToMinorUnits(t *testing.T) {
 		{name: "whole number", input: "23", want: 2300, wantErr: nil},
 		{name: "decimal number", input: "23.32", want: 2332, wantErr: nil},
 		{name: "trailing and leading spaces", input: " 23.32  ", want: 2332, wantErr: nil},
-		{name: "negative number", input: "-23.32", want: 0, wantErr: ErrCurrencyNegative},
+		{name: "negative number", input: "-23.32", want: 0, wantErr: ErrAmountNegative},
 		{name: "mixed string", input: "-A23f.$%32", want: 0, wantErr: ErrInvalidFormat},
-		{name: "empty string", input: "", want: 0, wantErr: ErrCurrencyEmpty},
+		{name: "empty string", input: "", want: 0, wantErr: ErrAmountEmpty},
 		{name: "long decimal", input: "23.3223", want: 0, wantErr: ErrDecimalOverflow},
 	}
 
