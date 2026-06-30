@@ -4,12 +4,13 @@ import (
 	"errors"
 	"strings"
 	"time"
-
-	"github.com/oklog/ulid/v2"
 )
 
 // ErrDescriptionEmpty indicates the line item description is empty.
-var ErrDescriptionEmpty = errors.New("empty description")
+var (
+	ErrDescriptionEmpty = errors.New("empty description")
+	ErrLineIDEmpty      = errors.New("empty line_id")
+)
 
 // LineItem represents a single charge added to a Bill.
 type LineItem struct {
@@ -22,8 +23,11 @@ type LineItem struct {
 
 // NewLineItem validates description and amount, then returns a new LineItem.
 // A zero amount is supported (no-charge, free or complimentary items).
-func NewLineItem(description string, amount int64, currency Currency) (*LineItem, error) {
+func NewLineItem(lineID, description string, amount int64, currency Currency) (*LineItem, error) {
 	description = strings.TrimSpace(description)
+	if lineID == "" {
+		return nil, ErrLineIDEmpty
+	}
 	if description == "" {
 		return nil, ErrDescriptionEmpty
 	}
@@ -32,7 +36,7 @@ func NewLineItem(description string, amount int64, currency Currency) (*LineItem
 	}
 
 	return &LineItem{
-		LineID:      ulid.Make().String(),
+		LineID:      lineID,
 		Description: description,
 		Amount:      amount,
 		Currency:    currency,

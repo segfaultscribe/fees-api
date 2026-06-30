@@ -125,7 +125,7 @@ func TestBillWorkflow_AddLineItem(t *testing.T) {
 
 			run := startTestBill(t, ctx, domain.USD)
 
-			li, err := domain.NewLineItem("cheeseburger", 500, tt.itemCurrency)
+			li, err := domain.NewLineItem("test-line-id", "cheeseburger", 500, tt.itemCurrency)
 			if err != nil {
 				t.Fatalf("failed to construct line item: %v", err)
 			}
@@ -155,7 +155,7 @@ func TestBillWorkflow_AddLineItem_RejectedWhenClosed(t *testing.T) {
 		t.Fatalf("failed to close bill: %v", err)
 	}
 
-	li, err := domain.NewLineItem("late item", 500, domain.USD)
+	li, err := domain.NewLineItem("test-line-id", "late item", 500, domain.USD)
 	if err != nil {
 		t.Fatalf("failed to construct line item: %v", err)
 	}
@@ -176,7 +176,7 @@ func TestBillWorkflow_MultipleLineItems_SumCorrectly(t *testing.T) {
 	var wantTotal int64
 	for _, amt := range amounts {
 		wantTotal += amt
-		li, err := domain.NewLineItem("item", amt, domain.USD)
+		li, err := domain.NewLineItem(ulid.Make().String(), "item", amt, domain.USD)
 		if err != nil {
 			t.Fatalf("failed to construct line item: %v", err)
 		}
@@ -204,7 +204,7 @@ func TestBillWorkflow_AddLineItem_IdempotentOnDuplicateID(t *testing.T) {
 
 	run := startTestBill(t, ctx, domain.USD)
 
-	li, err := domain.NewLineItem("cheeseburger", 500, domain.USD)
+	li, err := domain.NewLineItem("test-line-id", "cheeseburger", 500, domain.USD)
 	if err != nil {
 		t.Fatalf("failed to construct line item: %v", err)
 	}
@@ -234,7 +234,7 @@ func TestBillWorkflow_CloseBill(t *testing.T) {
 
 	run := startTestBill(t, ctx, domain.USD)
 
-	li, err := domain.NewLineItem("cheeseburger", 500, domain.USD)
+	li, err := domain.NewLineItem("test-line-id", "cheeseburger", 500, domain.USD)
 	if err != nil {
 		t.Fatalf("failed to construct line item: %v", err)
 	}
