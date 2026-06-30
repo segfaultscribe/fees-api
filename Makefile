@@ -19,4 +19,7 @@ build:
 run:
 	encore run
 
+worker:
+	go run cmd/worker/main.go
+
 check: fmt lint test

@@ -1,24 +1,32 @@
 package bill
 
-import "go.temporal.io/sdk/client"
+import (
+	"log"
+
+	"go.temporal.io/sdk/client"
+)
 
 // taskQueue is the Temporal task queue used by the bill worker.
 const taskQueue = "fees-api-bill-queue"
 
-// temporalClient is the shared client used by all bill API endpoints
-// to communicate with the Temporal server.
-var temporalClient client.Client
+// Service represents the running encore service.
+//
+//encore:service
+type Service struct {
+	temporalClient client.Client
+}
 
 // initService is called by Encore on service startup to establish
 // the connection to the Temporal server.
-func initService() error {
+func initService() (*Service, error) {
+	log.Println("initService: connecting to Temporal")
+
 	c, err := client.Dial(client.Options{
-		HostPort:  cfg.TemporalHostPort(),
-		Namespace: cfg.TemporalNamespace(),
+		HostPort:  "localhost:7233",
+		Namespace: "default",
 	})
 	if err != nil {
-		return err
+		return nil, err
 	}
-	temporalClient = c
-	return nil
+	return &Service{temporalClient: c}, nil
 }
