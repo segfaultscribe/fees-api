@@ -7,6 +7,7 @@ import (
 	"encore.app/bill/workflow"
 	"encore.dev/beta/errs"
 	"encore.dev/rlog"
+	"go.temporal.io/api/enums/v1"
 	"go.temporal.io/sdk/client"
 )
 
@@ -34,8 +35,9 @@ func (s *Service) CreateBill(ctx context.Context, req *CreateRequest) (*Response
 	run, err := s.temporalClient.ExecuteWorkflow(
 		ctx,
 		client.StartWorkflowOptions{
-			ID:        req.BillID,
-			TaskQueue: taskQueue,
+			ID:                    req.BillID,
+			TaskQueue:             workflow.TaskQueue,
+			WorkflowIDReusePolicy: enums.WORKFLOW_ID_REUSE_POLICY_REJECT_DUPLICATE,
 		},
 		workflow.BillWorkflow,
 		&workflow.BillWorkflowParams{
@@ -47,7 +49,7 @@ func (s *Service) CreateBill(ctx context.Context, req *CreateRequest) (*Response
 		rlog.Error("workflow creation failed", "workflow id", req.BillID)
 		return nil, &errs.Error{
 			Code:    errs.Internal,
-			Message: "faield to create bill",
+			Message: "failed to create bill",
 		}
 	}
 	rlog.Info("workflow created", "workflow id", req.BillID)

@@ -5,8 +5,12 @@ import (
 	"errors"
 
 	"encore.app/bill/domain"
+	"go.temporal.io/sdk/temporal"
 	"go.temporal.io/sdk/workflow"
 )
+
+// TaskQueue is the Temporal task queue used by the bill worker.
+const TaskQueue = "fees-api-bill-queue"
 
 // BillWorkflowParams are the parameters passed to BillWorkflow.
 type BillWorkflowParams struct {
@@ -49,7 +53,7 @@ func BillWorkflow(ctx workflow.Context, billParams *BillWorkflowParams) error {
 
 	if billParams.BillID == "" {
 		logger.Error("bill workflow started with empty BillID")
-		return ErrBillIDEmpty
+		return temporal.NewApplicationError(ErrBillIDEmpty.Error(), "BillIDEmpty")
 	}
 
 	bill := domain.NewBill(
@@ -65,7 +69,7 @@ func BillWorkflow(ctx workflow.Context, billParams *BillWorkflowParams) error {
 		AddLineItem,
 		func(ctx workflow.Context, li domain.LineItem) (domain.LineItem, error) {
 			if bill.Status == domain.BillClosed {
-				return domain.LineItem{}, ErrBillClosed
+				return domain.LineItem{}, temporal.NewApplicationError(ErrBillClosed.Error(), "BillClosed")
 			}
 			if existing, ok := bill.LineItems[li.LineID]; ok {
 				return existing, nil
@@ -77,13 +81,13 @@ func BillWorkflow(ctx workflow.Context, billParams *BillWorkflowParams) error {
 		workflow.UpdateHandlerOptions{
 			Validator: func(ctx workflow.Context, li domain.LineItem) error {
 				if bill.Status == domain.BillClosed {
-					return ErrBillClosed
+					return temporal.NewApplicationError(ErrBillClosed.Error(), "BillClosed")
 				}
 				if li.LineID == "" {
-					return ErrLineIDEmpty
+					return temporal.NewApplicationError(ErrLineIDEmpty.Error(), "LineIDEmpty")
 				}
 				if bill.Currency != li.Currency {
-					return ErrCurrencyMismatch
+					return temporal.NewApplicationError(ErrCurrencyMismatch.Error(), "CurrencyMismatch")
 				}
 				return nil
 			},
